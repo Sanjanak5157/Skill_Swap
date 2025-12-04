@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Colleges</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>SkillSwap</h2>
+        </div>
+        <div class="nav-links">
+            <button class="nav-link" data-page="skills">Skills/Video Call</button>
+            <button class="nav-link" data-page="courses">Courses</button>
+            <button class="nav-link" data-page="notes">Notes</button>
+            <button class="nav-link" data-page="projects">Projects</button>
+            <button class="nav-link active" data-page="colleges">Colleges</button>
+            <button class="nav-link" data-page="datasets">Datasets</button>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-icon" id="notificationBtn">🔔</button>
+            <button class="btn-icon" id="profileBtn">👤</button>
+            <button class="btn-logout" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div id="colleges-page" class="page active">
+            <div class="page-header">
+                <h2>Colleges</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="collegeSearch" placeholder="search college">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('college')">Add College</button>
+                </div>
+            </div>
+            <div class="content-grid" id="collegesGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="modalTitle">Add College</h3>
+            <form id="uploadForm">
+                <div id="uploadFields">
+                    <!-- Dynamic fields will be inserted here -->
+                </div>
+                <button type="submit" class="btn-primary">Add College</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { logout, getAuthHeaders, checkAuth, showNotification } from '../js/auth.js';
+        import { openUploadModal } from '../js/upload.js';
+
+        const API_BASE = 'http://localhost:5000/api';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!checkAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            await initializeCollegesPage();
+        });
+
+        async function initializeCollegesPage() {
+            await loadColleges();
+            initializeEventListeners();
+        }
+
+        async function loadColleges() {
+            try {
+                const response = await fetch(`${API_BASE}/colleges`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const collegesGrid = document.getElementById('collegesGrid');
+                    if (collegesGrid) {
+                        collegesGrid.innerHTML = data.data.colleges.map(college => `
+                            <div class="content-card" onclick="viewCollege('${college.name}')">
+                                <h3>${college.name}</h3>
+                                <p>${college.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span style="color: var(--text-light);">${college.location || 'Location not specified'}</span>
+                                    <span style="background: var(--primary-color); color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.8rem;">
+                                        ${college.student_count || 0} students
+                                    </span>
+                                </div>
+                                <button class="btn-primary" onclick="event.stopPropagation(); viewCollegeStudents('${college.name}')" style="width: 100%;">
+                                    View Students
+                                </button>
+                            </div>
+                        `).join('') || '<p class="text-center">No colleges found. Add the first college!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading colleges:', error);
+                const collegesGrid = document.getElementById('collegesGrid');
+                if (collegesGrid) {
+                    collegesGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading colleges. Please try again.</p>';
+                }
+            }
+        }
+
+        function initializeEventListeners() {
+            // Search functionality
+            const collegeSearch = document.getElementById('collegeSearch');
+            if (collegeSearch) {
+                collegeSearch.addEventListener('input', debounce(async (e) => {
+                    const query = e.target.value;
+                    if (query.length > 2) {
+                        await searchColleges(query);
+                    } else if (query.length === 0) {
+                        await loadColleges();
+                    }
+                }, 300));
+            }
+
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const targetPage = e.target.getAttribute('data-page');
+                    if (targetPage !== 'colleges') {
+                        window.location.href = `${targetPage}.html`;
+                    }
+                });
+            });
+
+            // Profile button
+            document.getElementById('profileBtn').addEventListener('click', () => {
+                window.location.href = 'profile.html';
+            });
+
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // Modal close functionality
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                const closeBtn = modal.querySelector('.close');
+                closeBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+
+                window.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function searchColleges(query) {
+            try {
+                const response = await fetch(`${API_BASE}/colleges/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const collegesGrid = document.getElementById('collegesGrid');
+                    if (collegesGrid) {
+                        collegesGrid.innerHTML = data.data.colleges.map(college => `
+                            <div class="content-card" onclick="viewCollege('${college.name}')">
+                                <h3>${college.name}</h3>
+                                <p>${college.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span style="color: var(--text-light);">${college.location || 'Location not specified'}</span>
+                                    <span style="background: var(--primary-color); color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.8rem;">
+                                        ${college.student_count || 0} students
+                                    </span>
+                                </div>
+                                <button class="btn-primary" onclick="event.stopPropagation(); viewCollegeStudents('${college.name}')" style="width: 100%;">
+                                    View Students
+                                </button>
+                            </div>
+                        `).join('') || '<p class="text-center">No colleges found matching your search.</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error searching colleges:', error);
+                showNotification('Error searching colleges', 'error');
+            }
+        }
+
+        window.openUploadModal = openUploadModal;
+        window.viewCollege = (collegeName) => {
+            showNotification('College details coming soon!', 'info');
+        };
+
+        window.viewCollegeStudents = (collegeName) => {
+            showNotification('Loading students list...', 'info');
+        };
+    </script>
+</body>
+</html>

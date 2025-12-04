@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Main</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* Video Call Styles */
+        .video-call-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #1a1a1a;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .video-call-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            border-bottom: 1px solid #333;
+        }
+        
+        .video-call-main {
+            flex: 1;
+            display: flex;
+            padding: 1rem;
+            gap: 1rem;
+        }
+        
+        .video-container {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .video-feed {
+            flex: 1;
+            background: #000;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-feed video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-feed-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+        }
+        
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn.end-call {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .control-btn.mute {
+            background: #3498db;
+            color: white;
+        }
+        
+        .control-btn.video {
+            background: #3498db;
+            color: white;
+        }
+        
+        .control-btn.screen-share {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .call-sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .call-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .call-participants {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .participant-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .chat-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            height: 300px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 0.5rem;
+            border-top: 1px solid #444;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .chat-input button {
+            margin-left: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .skill-sharing-panel {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .skill-sharing-panel h4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .skill-sharing-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .skill-sharing-actions button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .skill-sharing-actions button:hover {
+            background: #2980b9;
+        }
+        
+        .minimized-video {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
+            background: #000;
+            border-radius: 8px;
+            z-index: 1001;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+        
+        .minimized-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .minimize-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>SkillSwap</h2>
+        </div>
+        <div class="nav-links">
+            <button class="nav-link active" data-page="skills">Skills/Video Call</button>
+            <button class="nav-link" data-page="courses">Courses</button>
+            <button class="nav-link" data-page="notes">Notes</button>
+            <button class="nav-link" data-page="projects">Projects</button>
+            <button class="nav-link" data-page="colleges">Colleges</button>
+            <button class="nav-link" data-page="datasets">Datasets</button>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-icon" id="notificationBtn">🔔</button>
+            <button class="btn-icon" id="profileBtn">👤</button>
+            <button class="btn-logout" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Skills/Video Call Page -->
+        <div id="skills-page" class="page active">
+            <div class="page-header">
+                <h2>Skills & Video Calls</h2>
+                <div class="search-container">
+                    <input type="text" id="skillSearch" placeholder="search example skills: code or name: bob">
+                    <button class="btn-search">🔍</button>
+                </div>
+            </div>
+            <div class="users-grid" id="usersGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Courses Page -->
+        <div id="courses-page" class="page">
+            <div class="page-header">
+                <h2>Courses</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="courseSearch" placeholder="search courses">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('course')">Upload Course</button>
+                </div>
+            </div>
+            <div class="content-grid" id="coursesGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Notes Page -->
+        <div id="notes-page" class="page">
+            <div class="page-header">
+                <h2>Notes</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="noteSearch" placeholder="search notes category: code">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('note')">Upload Note</button>
+                </div>
+            </div>
+            <div class="content-grid" id="notesGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Projects Page -->
+        <div id="projects-page" class="page">
+            <div class="page-header">
+                <h2>Projects</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="projectSearch" placeholder="search project category: code">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('project')">Upload Project</button>
+                </div>
+            </div>
+            <div class="content-grid" id="projectsGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Colleges Page -->
+        <div id="colleges-page" class="page">
+            <div class="page-header">
+                <h2>Colleges</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="collegeSearch" placeholder="search college">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('college')">Add College</button>
+                </div>
+            </div>
+            <div class="content-grid" id="collegesGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Datasets Page -->
+        <div id="datasets-page" class="page">
+            <div class="page-header">
+                <h2>Datasets</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="datasetSearch" placeholder="search datasets category: animal">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('dataset')">Upload Dataset</button>
+                </div>
+            </div>
+            <div class="content-grid" id="datasetsGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Video Call Interface -->
+    <div id="videoCallContainer" class="video-call-container">
+        <div class="video-call-header">
+            <h3>SkillSwap Video Call</h3>
+            <div>
+                <span id="callTimer">00:00</span>
+                <button id="minimizeCall" class="control-btn" style="margin-left: 1rem;">−</button>
+                <button id="closeCall" class="control-btn end-call" style="margin-left: 0.5rem;">×</button>
+            </div>
+        </div>
+        
+        <div class="video-call-main">
+            <div class="video-container">
+                <div class="video-feed">
+                    <video id="remoteVideo" autoplay></video>
+                    <div class="video-feed-label">Alex (Web Development)</div>
+                </div>
+                
+                <div class="video-feed">
+                    <video id="localVideo" autoplay muted></video>
+                    <div class="video-feed-label">You</div>
+                </div>
+                
+                <div class="video-controls">
+                    <button id="muteBtn" class="control-btn mute" title="Mute">🎤</button>
+                    <button id="videoBtn" class="control-btn video" title="Turn off video">📹</button>
+                    <button id="screenShareBtn" class="control-btn screen-share" title="Share screen">🖥️</button>
+                    <button id="endCallBtn" class="control-btn end-call" title="End call">📞</button>
+                </div>
+            </div>
+            
+            <div class="call-sidebar">
+                <div class="call-info">
+                    <h4>Call Information</h4>
+                    <p><strong>Skill:</strong> Web Development</p>
+                    <p><strong>With:</strong> Alex Johnson</p>
+                    <p><strong>Duration:</strong> <span id="callDuration">00:00</span></p>
+                </div>
+                
+                <div class="call-participants">
+                    <h4>Participants (2)</h4>
+                    <div class="participant-item">
+                        <div class="participant-avatar">A</div>
+                        <span>Alex Johnson</span>
+                    </div>
+                    <div class="participant-item">
+                        <div class="participant-avatar">Y</div>
+                        <span>You (Host)</span>
+                    </div>
+                </div>
+                
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message">
+                            <strong>Alex:</strong> Hi! Ready to learn some web development?
+                        </div>
+                        <div class="message">
+                            <strong>You:</strong> Yes, excited to get started!
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chatInput" placeholder="Type a message...">
+                        <button id="sendMessage">Send</button>
+                    </div>
+                </div>
+                
+                <div class="skill-sharing-panel">
+                    <h4>Skill Sharing Tools</h4>
+                    <p>Share your screen, code, or files during the call</p>
+                    <div class="skill-sharing-actions">
+                        <button id="shareScreen">Share Screen</button>
+                        <button id="shareCode">Share Code</button>
+                        <button id="shareFile">Share File</button>
+                        <button id="whiteboard">Whiteboard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Minimized Video Call -->
+    <div id="minimizedCall" class="minimized-video">
+        <button id="maximizeCall" class="minimize-btn">+</button>
+        <video id="minimizedRemoteVideo" autoplay></video>
+        <div class="video-feed-label" style="font-size: 0.7rem;">Alex - Web Development</div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="modalTitle">Upload</h3>
+            <form id="uploadForm">
+                <div id="uploadFields">
+                    <!-- Dynamic fields based on type -->
+                </div>
+                <button type="submit" class="btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { logout, getAuthHeaders, checkAuth, getCurrentUser, showNotification } from '../js/auth.js';
+        import { openUploadModal } from '../js/upload.js';
+
+        const API_BASE = 'http://localhost:5000/api';
+        let currentPage = 'skills';
+        let currentUser = null;
+        let callTimer = null;
+        let callStartTime = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!checkAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = getCurrentUser();
+            await initializeApp();
+            initializeVideoCall();
+        });
+
+        // Initialize the main application
+        async function initializeApp() {
+            initializeNavigation();
+            await loadSkills();
+            initializeEventListeners();
+            updateUserInfo();
+        }
+
+        // Initialize video call functionality
+        function initializeVideoCall() {
+            // Video call buttons
+            const endCallBtn = document.getElementById('endCallBtn');
+            const muteBtn = document.getElementById('muteBtn');
+            const videoBtn = document.getElementById('videoBtn');
+            const screenShareBtn = document.getElementById('screenShareBtn');
+            const closeCallBtn = document.getElementById('closeCall');
+            const minimizeCallBtn = document.getElementById('minimizeCall');
+            const maximizeCallBtn = document.getElementById('maximizeCall');
+            const sendMessageBtn = document.getElementById('sendMessage');
+            const chatInput = document.getElementById('chatInput');
+            
+            // Video call control functions
+            endCallBtn.addEventListener('click', endVideoCall);
+            closeCallBtn.addEventListener('click', endVideoCall);
+            
+            muteBtn.addEventListener('click', function() {
+                const isMuted = this.classList.toggle('active');
+                this.textContent = isMuted ? '🔇' : '🎤';
+                showNotification(isMuted ? 'Microphone muted' : 'Microphone unmuted');
+            });
+            
+            videoBtn.addEventListener('click', function() {
+                const videoOff = this.classList.toggle('active');
+                this.textContent = videoOff ? '📷' : '📹';
+                showNotification(videoOff ? 'Video turned off' : 'Video turned on');
+            });
+            
+            screenShareBtn.addEventListener('click', function() {
+                const isSharing = this.classList.toggle('active');
+                this.textContent = isSharing ? '🖥️⏹️' : '🖥️';
+                showNotification(isSharing ? 'Screen sharing started' : 'Screen sharing stopped');
+            });
+            
+            minimizeCallBtn.addEventListener('click', minimizeVideoCall);
+            maximizeCallBtn.addEventListener('click', maximizeVideoCall);
+            
+            // Chat functionality
+            sendMessageBtn.addEventListener('click', sendChatMessage);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
+            
+            // Skill sharing buttons
+            document.getElementById('shareScreen').addEventListener('click', function() {
+                showNotification('Screen sharing feature activated', 'info');
+            });
+            
+            document.getElementById('shareCode').addEventListener('click', function() {
+                showNotification('Code sharing feature activated', 'info');
+            });
+            
+            document.getElementById('shareFile').addEventListener('click', function() {
+                showNotification('File sharing feature activated', 'info');
+            });
+            
+            document.getElementById('whiteboard').addEventListener('click', function() {
+                showNotification('Whiteboard feature activated', 'info');
+            });
+        }
+        
+        // Start video call
+        function startVideoCall(skillId, userName, skillName) {
+            const videoCallContainer = document.getElementById('videoCallContainer');
+            const minimizedCall = document.getElementById('minimizedCall');
+            
+            videoCallContainer.style.display = 'flex';
+            minimizedCall.style.display = 'none';
+            
+            // Update call info
+            document.querySelector('.call-info p:nth-child(2)').innerHTML = `<strong>With:</strong> ${userName}`;
+            document.querySelector('.call-info p:nth-child(1)').innerHTML = `<strong>Skill:</strong> ${skillName}`;
+            document.querySelector('.video-feed-label').textContent = `${userName} (${skillName})`;
+            document.querySelector('.minimized-video .video-feed-label').textContent = `${userName} - ${skillName}`;
+            
+            // Start timer
+            callStartTime = new Date();
+            updateCallTimer();
+            callTimer = setInterval(updateCallTimer, 1000);
+            
+            // Simulate video streams (in a real app, this would connect to WebRTC)
+            simulateVideoStreams();
+        }
+        
+        // End video call
+        function endVideoCall() {
+            const videoCallContainer = document.getElementById('videoCallContainer');
+            const minimizedCall = document.getElementById('minimizedCall');
+            
+            videoCallContainer.style.display = 'none';
+            minimizedCall.style.display = 'none';
+            
+            // Clear timer
+            if (callTimer) {
+                clearInterval(callTimer);
+                callTimer = null;
+            }
+            
+            showNotification('Video call ended', 'info');
+        }
+        
+        // Minimize video call
+        function minimizeVideoCall() {
+            const videoCallContainer = document.getElementById('videoCallContainer');
+            const minimizedCall = document.getElementById('minimizedCall');
+            
+            videoCallContainer.style.display = 'none';
+            minimizedCall.style.display = 'block';
+        }
+        
+        // Maximize video call
+        function maximizeVideoCall() {
+            const videoCallContainer = document.getElementById('videoCallContainer');
+            const minimizedCall = document.getElementById('minimizedCall');
+            
+            videoCallContainer.style.display = 'flex';
+            minimizedCall.style.display = 'none';
+        }
+        
+        // Update call timer
+        function updateCallTimer() {
+            if (!callStartTime) return;
+            
+            const now = new Date();
+            const diff = Math.floor((now - callStartTime) / 1000);
+            const minutes = Math.floor(diff / 60);
+            const seconds = diff % 60;
+            
+            const timerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('callTimer').textContent = timerText;
+            document.getElementById('callDuration').textContent = timerText;
+        }
+        
+        // Send chat message
+        function sendChatMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const chatMessages = document.getElementById('chatMessages');
+            
+            if (chatInput.value.trim() === '') return;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `<strong>You:</strong> ${chatInput.value}`;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            chatInput.value = '';
+        }
+        
+        // Simulate video streams (for demo purposes)
+        function simulateVideoStreams() {
+            // In a real application, you would set up WebRTC streams here
+            // For this demo, we'll just show placeholder videos
+            const localVideo = document.getElementById('localVideo');
+            const remoteVideo = document.getElementById('remoteVideo');
+            const minimizedRemoteVideo = document.getElementById('minimizedRemoteVideo');
+            
+            // Create a dummy video stream (in a real app, this would be from getUserMedia)
+            // For now, we'll just set a black background
+            localVideo.style.backgroundColor = '#000';
+            remoteVideo.style.backgroundColor = '#000';
+            minimizedRemoteVideo.style.backgroundColor = '#000';
+        }
+
+        // Update user information in the UI
+        function updateUserInfo() {
+            const profileBtn = document.getElementById('profileBtn');
+            if (profileBtn && currentUser) {
+                profileBtn.textContent = currentUser.name.charAt(0).toUpperCase();
+                profileBtn.title = `Profile: ${currentUser.name}`;
+            }
+        }
+
+        // Navigation functionality
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const targetPage = link.getAttribute('data-page');
+                    switchPage(targetPage);
+                });
+            });
+
+            // Profile button
+            const profileBtn = document.getElementById('profileBtn');
+            if (profileBtn) {
+                profileBtn.addEventListener('click', () => {
+                    window.location.href = 'profile.html';
+                });
+            }
+
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
+        }
+
+        // Switch between pages
+        async function switchPage(page) {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+
+            // Update active nav link
+            navLinks.forEach(nl => nl.classList.remove('active'));
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+            
+            // Show target page
+            pages.forEach(p => p.classList.remove('active'));
+            document.getElementById(`${page}-page`).classList.add('active');
+
+            currentPage = page;
+            await loadPageContent(page);
+        }
+
+        // Load page content based on current page
+        async function loadPageContent(page) {
+            showLoading(true);
+            
+            try {
+                switch (page) {
+                    case 'skills':
+                        await loadSkills();
+                        break;
+                    case 'courses':
+                        await loadCourses();
+                        break;
+                    case 'notes':
+                        await loadNotes();
+                        break;
+                    case 'projects':
+                        await loadProjects();
+                        break;
+                    case 'colleges':
+                        await loadColleges();
+                        break;
+                    case 'datasets':
+                        await loadDatasets();
+                        break;
+                }
+            } catch (error) {
+                console.error(`Error loading ${page}:`, error);
+                showNotification(`Error loading ${page}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Show/hide loading state
+        function showLoading(show) {
+            const mainContent = document.querySelector('.main-content');
+            if (show) {
+                mainContent.classList.add('loading');
+            } else {
+                mainContent.classList.remove('loading');
+            }
+        }
+
+        // Load skills for skills page
+        async function loadSkills() {
+            try {
+                const response = await fetch(`${API_BASE}/skills`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const skillsGrid = document.getElementById('usersGrid');
+                    if (skillsGrid) {
+                        skillsGrid.innerHTML = data.data.skills.map(skill => `
+                            <div class="user-card" onclick="viewUserProfile(${skill.user_id})">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    ${skill.avatar_url ? 
+                                        `<img src="${skill.avatar_url}" alt="${skill.user_name}" style="width: 50px; height: 50px; border-radius: 50%;">` :
+                                        `<div style="width: 50px; height: 50px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">${skill.user_name.charAt(0)}</div>`
+                                    }
+                                    <div>
+                                        <h3>${skill.user_name}</h3>
+                                        <p class="college">${skill.college || 'No college specified'}</p>
+                                    </div>
+                                </div>
+                                <div class="skill-item">
+                                    <strong>${skill.name}</strong>
+                                    <p>${skill.description || 'No description provided'}</p>
+                                    <small style="color: var(--primary-color);">Level: ${skill.proficiency_level}</small>
+                                </div>
+                                <button class="btn-primary" onclick="event.stopPropagation(); startVideoCall(${skill.id}, '${skill.user_name}', '${skill.name}')" style="width: 100%; margin-top: 1rem;">
+                                    Start Video Call
+                                </button>
+                            </div>
+                        `).join('') || '<p class="text-center">No skills found. Be the first to share a skill!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading skills:', error);
+                const skillsGrid = document.getElementById('usersGrid');
+                if (skillsGrid) {
+                    skillsGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading skills. Please try again.</p>';
+                }
+            }
+        }
+
+        // Load courses
+        async function loadCourses() {
+            try {
+                const response = await fetch(`${API_BASE}/courses`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const coursesGrid = document.getElementById('coursesGrid');
+                    if (coursesGrid) {
+                        coursesGrid.innerHTML = data.data.courses.map(course => `
+                            <div class="content-card">
+                                <h3>${course.title}</h3>
+                                <p>${course.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span class="author">By: ${course.instructor_name}</span>
+                                    <span style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; color: var(--text-light);">
+                                        ${course.difficulty_level}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary" onclick="viewCourse(${course.id})" style="flex: 1;">
+                                        View Course
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadCourse(${course.id})">
+                                        📥
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center">No courses found. Upload the first course!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading courses:', error);
+                const coursesGrid = document.getElementById('coursesGrid');
+                if (coursesGrid) {
+                    coursesGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading courses. Please try again.</p>';
+                }
+            }
+        }
+
+        // Load notes
+        async function loadNotes() {
+            try {
+                const response = await fetch(`${API_BASE}/notes`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const notesGrid = document.getElementById('notesGrid');
+                    if (notesGrid) {
+                        notesGrid.innerHTML = data.data.notes.map(note => `
+                            <div class="content-card">
+                                <h3>${note.title}</h3>
+                                <p>${note.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span class="author">By: ${note.author_name}</span>
+                                    <span style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; color: var(--text-light);">
+                                        ${note.file_type?.toUpperCase() || 'FILE'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary" onclick="viewNote(${note.id})" style="flex: 1;">
+                                        View Note
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadNote(${note.id})">
+                                        📥
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center">No notes found. Upload the first note!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading notes:', error);
+                const notesGrid = document.getElementById('notesGrid');
+                if (notesGrid) {
+                    notesGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading notes. Please try again.</p>';
+                }
+            }
+        }
+
+        // Load projects
+        async function loadProjects() {
+            try {
+                const response = await fetch(`${API_BASE}/projects`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const projectsGrid = document.getElementById('projectsGrid');
+                    if (projectsGrid) {
+                        projectsGrid.innerHTML = data.data.projects.map(project => `
+                            <div class="content-card">
+                                <h3>${project.title}</h3>
+                                <p>${project.description || 'No description provided'}</p>
+                                <div style="margin: 1rem 0;">
+                                    <span class="author">By: ${project.author_name}</span>
+                                    ${project.technologies ? `
+                                        <div style="margin-top: 0.5rem;">
+                                            <small style="color: var(--text-light);">Tech: ${JSON.parse(project.technologies).join(', ')}</small>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary" onclick="viewProject(${project.id})" style="flex: 1;">
+                                        View Project
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadProject(${project.id})">
+                                        📥
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center">No projects found. Upload the first project!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                const projectsGrid = document.getElementById('projectsGrid');
+                if (projectsGrid) {
+                    projectsGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading projects. Please try again.</p>';
+                }
+            }
+        }
+
+        // Load colleges
+        async function loadColleges() {
+            try {
+                const response = await fetch(`${API_BASE}/colleges`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const collegesGrid = document.getElementById('collegesGrid');
+                    if (collegesGrid) {
+                        collegesGrid.innerHTML = data.data.colleges.map(college => `
+                            <div class="content-card" onclick="viewCollege('${college.name}')">
+                                <h3>${college.name}</h3>
+                                <p>${college.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span style="color: var(--text-light);">${college.location || 'Location not specified'}</span>
+                                    <span style="background: var(--primary-color); color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.8rem;">
+                                        ${college.student_count || 0} students
+                                    </span>
+                                </div>
+                                <button class="btn-primary" onclick="event.stopPropagation(); viewCollegeStudents('${college.name}')" style="width: 100%;">
+                                    View Students
+                                </button>
+                            </div>
+                        `).join('') || '<p class="text-center">No colleges found. Add the first college!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading colleges:', error);
+                const collegesGrid = document.getElementById('collegesGrid');
+                if (collegesGrid) {
+                    collegesGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading colleges. Please try again.</p>';
+                }
+            }
+        }
+
+        // Load datasets
+        async function loadDatasets() {
+            try {
+                const response = await fetch(`${API_BASE}/datasets`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const datasetsGrid = document.getElementById('datasetsGrid');
+                    if (datasetsGrid) {
+                        datasetsGrid.innerHTML = data.data.datasets.map(dataset => `
+                            <div class="content-card">
+                                <h3>${dataset.title}</h3>
+                                <p>${dataset.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span class="author">By: ${dataset.author_name}</span>
+                                    <span style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; color: var(--text-light);">
+                                        ${dataset.file_format?.toUpperCase() || 'FILE'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary" onclick="viewDataset(${dataset.id})" style="flex: 1;">
+                                        View Dataset
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadDataset(${dataset.id})">
+                                        📥
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center">No datasets found. Upload the first dataset!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading datasets:', error);
+                const datasetsGrid = document.getElementById('datasetsGrid');
+                if (datasetsGrid) {
+                    datasetsGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading datasets. Please try again.</p>';
+                }
+            }
+        }
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Search functionality for skills
+            const skillSearch = document.getElementById('skillSearch');
+            if (skillSearch) {
+                skillSearch.addEventListener('input', debounce(async (e) => {
+                    const query = e.target.value;
+                    if (query.length > 2) {
+                        await searchSkills(query);
+                    } else if (query.length === 0) {
+                        await loadSkills();
+                    }
+                }, 300));
+            }
+
+            // Modal close functionality
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                const closeBtn = modal.querySelector('.close');
+                closeBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+
+                window.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Debounce function for search
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Search skills
+        async function searchSkills(query) {
+            try {
+                const response = await fetch(`${API_BASE}/skills/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const skillsGrid = document.getElementById('usersGrid');
+                    if (skillsGrid) {
+                        skillsGrid.innerHTML = data.data.skills.map(skill => `
+                            <div class="user-card" onclick="viewUserProfile(${skill.user_id})">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    ${skill.avatar_url ? 
+                                        `<img src="${skill.avatar_url}" alt="${skill.user_name}" style="width: 50px; height: 50px; border-radius: 50%;">` :
+                                        `<div style="width: 50px; height: 50px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">${skill.user_name.charAt(0)}</div>`
+                                    }
+                                    <div>
+                                        <h3>${skill.user_name}</h3>
+                                        <p class="college">${skill.college || 'No college specified'}</p>
+                                    </div>
+                                </div>
+                                <div class="skill-item">
+                                    <strong>${skill.name}</strong>
+                                    <p>${skill.description || 'No description provided'}</p>
+                                    <small style="color: var(--primary-color);">Level: ${skill.proficiency_level}</small>
+                                </div>
+                                <button class="btn-primary" onclick="event.stopPropagation(); startVideoCall(${skill.id}, '${skill.user_name}', '${skill.name}')" style="width: 100%; margin-top: 1rem;">
+                                    Start Video Call
+                                </button>
+                            </div>
+                        `).join('') || '<p class="text-center">No skills found matching your search.</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error searching skills:', error);
+                showNotification('Error searching skills', 'error');
+            }
+        }
+
+        // Make functions available globally
+        window.openUploadModal = openUploadModal;
+        window.startVideoCall = startVideoCall;
+        window.viewUserProfile = (userId) => {
+            showNotification('User profile feature coming soon!', 'info');
+        };
+
+        window.viewCourse = (courseId) => {
+            showNotification('Course viewer coming soon!', 'info');
+        };
+
+        window.downloadCourse = (courseId) => {
+            showNotification('Course download started!', 'success');
+        };
+
+        window.viewNote = (noteId) => {
+            showNotification('Note viewer coming soon!', 'info');
+        };
+
+        window.downloadNote = async (noteId) => {
+            try {
+                const response = await fetch(`${API_BASE}/notes/${noteId}/download`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showNotification('Note download recorded!', 'success');
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error recording note download:', error);
+                showNotification('Error downloading note', 'error');
+            }
+        };
+
+        window.viewProject = (projectId) => {
+            showNotification('Project viewer coming soon!', 'info');
+        };
+
+        window.downloadProject = (projectId) => {
+            showNotification('Project download started!', 'success');
+        };
+
+        window.viewCollege = (collegeName) => {
+            showNotification('College details coming soon!', 'info');
+        };
+
+        window.viewCollegeStudents = (collegeName) => {
+            showNotification('Loading students list...', 'info');
+        };
+
+        window.viewDataset = (datasetId) => {
+            showNotification('Dataset viewer coming soon!', 'info');
+        };
+
+        window.downloadDataset = async (datasetId) => {
+            try {
+                const response = await fetch(`${API_BASE}/datasets/${datasetId}/download`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showNotification('Dataset download recorded!', 'success');
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error recording dataset download:', error);
+                showNotification('Error downloading dataset', 'error');
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,1144 @@
+# Create the main project directory
+mkdir skillswap
+cd skillswap
+
+# Create backend structure
+mkdir -p backend/config,backend/controllers,backend/middleware,backend/models,backend/routes,backend/uploads/courses,backend/uploads/notes,backend/uploads/projects,backend/uploads/colleges,backend/uploads/datasets
+
+# Create frontend structure  
+mkdir -p frontend/css,frontend/js,frontend/pages
+
+# Create all files
+@(
+    "backend/.env",
+    "backend/package.json",
+    "backend/server.js",
+    "backend/config/database.js",
+    "backend/controllers/authController.js",
+    "backend/controllers/userController.js", 
+    "backend/controllers/skillController.js",
+    "backend/controllers/courseController.js",
+    "backend/controllers/noteController.js",
+    "backend/controllers/projectController.js",
+    "backend/controllers/collegeController.js",
+    "backend/controllers/datasetController.js",
+    "backend/middleware/authMiddleware.js",
+    "backend/models/User.js",
+    "backend/models/Skill.js",
+    "backend/models/Course.js",
+    "backend/models/Note.js",
+    "backend/models/Project.js",
+    "backend/models/College.js",
+    "backend/models/Dataset.js",
+    "backend/routes/authRoutes.js",
+    "backend/routes/userRoutes.js",
+    "backend/routes/skillRoutes.js",
+    "backend/routes/courseRoutes.js",
+    "backend/routes/noteRoutes.js",
+    "backend/routes/projectRoutes.js",
+    "backend/routes/collegeRoutes.js",
+    "backend/routes/datasetRoutes.js",
+    "frontend/index.html",
+    "frontend/css/style.css",
+    "frontend/css/welcome.css",
+    "frontend/js/auth.js",
+    "frontend/js/main.js",
+    "frontend/js/upload.js",
+    "frontend/pages/welcome.html",
+    "frontend/pages/login.html",
+    "frontend/pages/signup.html",
+    "frontend/pages/main.html",
+    "frontend/pages/profile.html",
+    "frontend/pages/skill.html",
+    "frontend/pages/course.html",
+    "frontend/pages/note.html",
+    "frontend/pages/project.html",
+    "frontend/pages/college.html",
+    "frontend/pages/dataset.html",
+    "README.md"
+) | ForEach-Object { New-Item -Path $_ -ItemType File -Force }
+
+
+skillswap/
+├── backend/
+│   ├── config/
+│   │   └── database.js
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   ├── userController.js
+│   │   ├── skillController.js
+│   │   ├── courseController.js
+│   │   ├── noteController.js
+│   │   ├── projectController.js
+│   │   ├── collegeController.js
+│   │   └── datasetController.js
+│   ├── middleware/
+│   │   └── authMiddleware.js
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── Skill.js
+│   │   ├── Course.js
+│   │   ├── Note.js
+│   │   ├── Project.js
+│   │   ├── College.js
+│   │   └── Dataset.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   ├── userRoutes.js
+│   │   ├── skillRoutes.js
+│   │   ├── courseRoutes.js
+│   │   ├── noteRoutes.js
+│   │   ├── projectRoutes.js
+│   │   ├── collegeRoutes.js
+│   │   └── datasetRoutes.js
+│   ├── uploads/
+│   │   ├── courses/
+│   │   ├── notes/
+│   │   ├── projects/
+│   │   ├── colleges/
+│   │   └── datasets/
+│   ├── .env
+│   ├── package.json
+│   └── server.js
+├── frontend/
+│   ├── css/
+│   │   ├── style.css
+│   │   └── welcome.css
+│   ├── js/
+│   │   ├── auth.js
+│   │   ├── main.js
+│   │   └── upload.js
+│   ├── pages/
+│   │   ├── welcome.html
+│   │   ├── login.html
+│   │   ├── signup.html
+│   │   ├── main.html
+│   │   ├── profile.html
+│   │   ├── skill.html
+│   │   ├── course.html
+│   │   ├── note.html
+│   │   ├── project.html
+│   │   ├── college.html
+│   │   └── dataset.html
+│   └── index.html
+└── README.md
+
+new
+for skillswap what all folder and files need give 
+give full project on skill swap 
+
+stack should be use node.js, javascript, html, sql, mysql workbench 
+
+Desgin should be like :
+start -->click on link -->opens-->welcome page 
+welcome page contains design  as mentioned in above image
+before login -->welcome page 
+after login -->main page 
+welcome page-->login button-->login page(email, password(hashed) not have account (bottom create account)
+welcome page-->sign up button-->sign up page
+welcome page-->other all  button clicked on welcome page should navigate to -->login page
+
+main page :( scrolled down means  what on the lists )
+-->skill/videocall page
+-->courses page
+-->notes page
+-->project page 
+-->college page -->each college-->inside it lists of student to connect
+-->Datasets page
+
+main page contains  as mentioned in above image (but instead of login page put profile and notification at top right )
+
+main page-->click on button -->
+profile page should  it contains
+1. name, email, phone number, followed, following, 
+2.skills field should have skill name, skill description, image, 
+3.project field should have project name, project description, project upload as folder, files, image, video, voice (add button)
+4.notes field notes name, description of note, upload note
+5.college field college name, branch, semester
+6.applied video call for skill exchange knowledge and courses , 
+7.schedules time  for video to attend for other to teach 
+8.message
+
+
+1.)skill/videocall page
+a.)Design
+main-->skill/videocall page (it contains one search bar and lists of user profile 
+
+b.)function 
+main page-->skill/videocall page-->when opened lists of user profile should show and top search bar and when user search on search bar inside markdown as "search example skills: code or name: bob" searched base on name of user profile and skills they have, etc and -->click on  particular user profile its opens and shows there name, follow button and lists of skills they have and description of each skills they have and request button for each skills there have so to kept the schedule time )
+
+
+*remember user page details that should be seen when other user viewed means 
+what all other user can see my profile is name, follow button, lists of skills they have, description of skills and request button  for each skills there have so to kept the schedule time )
+
+2.)courses page
+a.)Design
+main page-->courses page-->on top one image of related to it and -->below image search bar  and that below  lists of all courses and upload button on top right to upload  courses that are public button at top right
+
+b.)function
+main page-->course page-->
+-->upload button-->upload courses as courses name, courses description, upload courses that as video 
+-->search bar markdown "search courses"
+-->when user click on any course show videos and how many module are there exits in that courses side of left
+
+3.)notes page
+a.)Design
+main page-->notes page-->on top one image of related to it and below -->search bar  and that below -->lists of all notes and upload notes button at top right and download button for each notes
+
+b.)function
+main page-->course page-->
+-->upload button-->upload notes as notes name, notes description, upload notes as pdf,ppt,word,zip.
+-->search bar markdown "search notes category :"code""
+-->when user click on any notes it should open notes user view and each notes as download button when click on download it should download
+
+4.)project page 
+a.)Design
+main page-->project page-->on top one image of related to it below -->search bar  and that below --> lists of all project so on when scroll down and upload  button at top right for upload project and download button for each project
+
+b.)function
+main page-->course page-->
+-->upload button-->upload project as project name, project description, upload project as zip all type extension
+-->search bar markdown "search project category :"code""
+-->when user click on any project it should open project all folder files open  user view and each project  as download button like as zip  when click on download it should download
+
+5.)college page 
+main page-->college page-->on top one image of related to it below -->search bar  and that below --> lists of all college so on when scroll down and upload  button at top right for upload college 
+
+b.)function
+main page-->college page-->
+-->upload button-->upload college as college name, college description, upload college as zip
+-->search bar markdown "search college"
+-->when user click on any college it should lists of  student who are study in that college so get information  from the user profile when where user create or add college name on there profile .
+
+6.)Datasets page
+a.)Design
+main page-->Datasets page-->on top one image of related to it below -->search bar  and that below --> lists of all Datasets so on when scroll down and upload  button at top right for upload Datasets and download button for each Datasets 
+
+b.)function
+main page-->Datasets page-->
+-->upload button-->upload Datasets as Datasets name, Datasets description, Datasets project as zip all type extension.
+-->search bar markdown "search Datasets category :"animal""
+-->when user click on any Datasets it should open Datasets all folder files open  user view and each Datasets as download button like as zip  when click on download it should download
+
+VS code as platform  I using remember.
+ ED version use as node.js remember
+
+
+
+
+
+
+
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- MySQL Server
+- VS Code (recommended)
+
+### 1. Database Setup
+
+```sql
+-- Create database
+CREATE DATABASE skillswap;
+
+-- Or use the initDB script
+cd backend
+npm run init-db
+
+
+API Endpoints
+Authentication
+POST /api/auth/register - User registration
+
+POST /api/auth/login - User login
+
+GET /api/auth/profile - Get user profile
+
+Skills
+GET /api/skills - Get all public skills
+
+POST /api/skills - Create new skill
+
+GET /api/skills/search - Search skills
+
+Courses
+GET /api/courses - Get all public courses
+
+POST /api/courses - Create new course
+
+Notes
+GET /api/notes - Get all public notes
+
+POST /api/notes - Create new note
+
+Projects
+GET /api/projects - Get all public projects
+
+POST /api/projects - Create new project
+
+Colleges
+GET /api/colleges - Get all colleges
+
+POST /api/colleges - Create new college
+
+Datasets
+GET /api/datasets - Get all public datasets
+
+POST /api/datasets - Create new dataset
+
+Development
+Backend Development
+bash
+cd backend
+npm run dev  # Starts with nodemon for auto-reload
+Frontend Development
+The frontend is static and can be edited directly in the frontend/ folder.
+
+Deployment
+Backend Deployment
+Set up production environment variables
+
+Build and start the server: npm start
+
+Use PM2 for process management: pm2 start server.js
+
+Frontend Deployment
+The frontend is served by the backend, so no separate deployment is needed.
+
+
+E:\Project\new new skill_swap\skillswap\backend>node scripts/initDB.js
+🚀 Starting database initialization...
+✅ Connected to database as id 21
+✅ Users table created/verified
+✅ Skills table created/verified
+✅ Courses table created/verified
+✅ Notes table created/verified
+✅ Projects table created/verified
+✅ Colleges table created/verified
+✅ Datasets table created/verified
+✅ Database initialization completed successfully!
+📊 All tables are ready for use.
+
+
+E:\Project\new new skill_swap\skillswap\backend>node test-db.js
+✅ Connected to database as id 23
+✅ Database connection test passed: true
+📊 Existing tables: [
+  'colleges',        
+  'courses',
+  'datasets',
+  'notes',
+  'projects',
+  'skills',
+  'users',
+  'video_requests'
+]
+
+
+
+
+----------------------------------------------------------------------------------------------------------
+CREATE DATABASE skillswap;
+USE skillswap;
+
+-- Users table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    college VARCHAR(255),
+    branch VARCHAR(255),
+    semester VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Skills table
+CREATE TABLE skills (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    image VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Courses table
+CREATE TABLE courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    video_url VARCHAR(255),
+    modules TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Notes table
+CREATE TABLE notes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    file_url VARCHAR(255),
+    file_type VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Projects table
+CREATE TABLE projects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    file_url VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Datasets table
+CREATE TABLE datasets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    file_url VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Video call requests table
+CREATE TABLE video_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    requester_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    skill_id INT NOT NULL,
+    scheduled_time DATETIME,
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
+);
+
+
+http://localhost:5000/api/skills
+
+http://localhost:5000/api/courses
+
+http://localhost:5000/api/auth/profile
+
+npm install ws--->web rtc--.>webscoter
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Main</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>SkillSwap</h2>
+        </div>
+        <div class="nav-links">
+            <button class="nav-link active" data-page="skills">Skills/Video Call</button>
+            <button class="nav-link" data-page="courses">Courses</button>
+            <button class="nav-link" data-page="notes">Notes</button>
+            <button class="nav-link" data-page="projects">Projects</button>
+            <button class="nav-link" data-page="colleges">Colleges</button>
+            <button class="nav-link" data-page="datasets">Datasets</button>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-icon" id="notificationBtn">🔔</button>
+            <button class="btn-icon" id="profileBtn">👤</button>
+            <button class="btn-logout" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Skills/Video Call Page -->
+        <div id="skills-page" class="page active">
+            <div class="page-header">
+                <h2>Skills & Video Calls</h2>
+                <div class="search-container">
+                    <input type="text" id="skillSearch" placeholder="search example skills: code or name: bob">
+                    <button class="btn-search">🔍</button>
+                </div>
+            </div>
+            <div class="users-grid" id="usersGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Courses Page -->
+        <div id="courses-page" class="page">
+            <div class="page-header">
+                <h2>Courses</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="courseSearch" placeholder="search courses">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('course')">Upload Course</button>
+                </div>
+            </div>
+            <div class="content-grid" id="coursesGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Notes Page -->
+        <div id="notes-page" class="page">
+            <div class="page-header">
+                <h2>Notes</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="noteSearch" placeholder="search notes category: code">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('note')">Upload Note</button>
+                </div>
+            </div>
+            <div class="content-grid" id="notesGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Projects Page -->
+        <div id="projects-page" class="page">
+            <div class="page-header">
+                <h2>Projects</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="projectSearch" placeholder="search project category: code">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('project')">Upload Project</button>
+                </div>
+            </div>
+            <div class="content-grid" id="projectsGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Colleges Page -->
+        <div id="colleges-page" class="page">
+            <div class="page-header">
+                <h2>Colleges</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="collegeSearch" placeholder="search college">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('college')">Add College</button>
+                </div>
+            </div>
+            <div class="content-grid" id="collegesGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Datasets Page -->
+        <div id="datasets-page" class="page">
+            <div class="page-header">
+                <h2>Datasets</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="datasetSearch" placeholder="search datasets category: animal">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('dataset')">Upload Dataset</button>
+                </div>
+            </div>
+            <div class="content-grid" id="datasetsGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="modalTitle">Upload</h3>
+            <form id="uploadForm">
+                <div id="uploadFields">
+                    <!-- Dynamic fields based on type -->
+                </div>
+                <button type="submit" class="btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { logout, getAuthHeaders, checkAuth, getCurrentUser, showNotification } from '../js/auth.js';
+        import { openUploadModal } from '../js/upload.js';
+
+        const API_BASE = 'http://localhost:5000/api';
+        let currentPage = 'skills';
+        let currentUser = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!checkAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = getCurrentUser();
+            await initializeApp();
+        });
+
+        // Initialize the main application
+        async function initializeApp() {
+            initializeNavigation();
+            await loadSkills();
+            initializeEventListeners();
+            updateUserInfo();
+        }
+
+        // Update user information in the UI
+        function updateUserInfo() {
+            const profileBtn = document.getElementById('profileBtn');
+            if (profileBtn && currentUser) {
+                profileBtn.textContent = currentUser.name.charAt(0).toUpperCase();
+                profileBtn.title = `Profile: ${currentUser.name}`;
+            }
+        }
+
+        // Navigation functionality
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const targetPage = link.getAttribute('data-page');
+                    switchPage(targetPage);
+                });
+            });
+
+            // Profile button
+            const profileBtn = document.getElementById('profileBtn');
+            if (profileBtn) {
+                profileBtn.addEventListener('click', () => {
+                    window.location.href = 'profile.html';
+                });
+            }
+
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
+        }
+
+        // Switch between pages
+        async function switchPage(page) {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+
+            // Update active nav link
+            navLinks.forEach(nl => nl.classList.remove('active'));
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+            
+            // Show target page
+            pages.forEach(p => p.classList.remove('active'));
+            document.getElementById(`${page}-page`).classList.add('active');
+
+            currentPage = page;
+            await loadPageContent(page);
+        }
+
+        // Load page content based on current page
+        async function loadPageContent(page) {
+            showLoading(true);
+            
+            try {
+                switch (page) {
+                    case 'skills':
+                        await loadSkills();
+                        break;
+                    case 'courses':
+                        await loadCourses();
+                        break;
+                    case 'notes':
+                        await loadNotes();
+                        break;
+                    case 'projects':
+                        await loadProjects();
+                        break;
+                    case 'colleges':
+                        await loadColleges();
+                        break;
+                    case 'datasets':
+                        await loadDatasets();
+                        break;
+                }
+            } catch (error) {
+                console.error(`Error loading ${page}:`, error);
+                showNotification(`Error loading ${page}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Show/hide loading state
+        function showLoading(show) {
+            const mainContent = document.querySelector('.main-content');
+            if (show) {
+                mainContent.classList.add('loading');
+            } else {
+                mainContent.classList.remove('loading');
+            }
+        }
+
+        // Load skills for skills page
+        async function loadSkills() {
+            try {
+                const response = await fetch(`${API_BASE}/skills`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const skillsGrid = document.getElementById('usersGrid');
+                    if (skillsGrid) {
+                        skillsGrid.innerHTML = data.data.skills.map(skill => `
+                            <div class="user-card" onclick="viewUserProfile(${skill.user_id})">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    ${skill.avatar_url ? 
+                                        `<img src="${skill.avatar_url}" alt="${skill.user_name}" style="width: 50px; height: 50px; border-radius: 50%;">` :
+                                        `<div style="width: 50px; height: 50px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">${skill.user_name.charAt(0)}</div>`
+                                    }
+                                    <div>
+                                        <h3>${skill.user_name}</h3>
+                                        <p class="college">${skill.college || 'No college specified'}</p>
+                                    </div>
+                                </div>
+                                <div class="skill-item">
+                                    <strong>${skill.name}</strong>
+                                    <p>${skill.description || 'No description provided'}</p>
+                                    <small style="color: var(--primary-color);">Level: ${skill.proficiency_level}</small>
+                                </div>
+                                <button class="btn-primary" onclick="event.stopPropagation(); requestVideoCall(${skill.id})" style="width: 100%; margin-top: 1rem;">
+                                    Request Video Call
+                                </button>
+                            </div>
+                        `).join('') || '<p class="text-center">No skills found. Be the first to share a skill!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading skills:', error);
+                const skillsGrid = document.getElementById('usersGrid');
+                if (skillsGrid) {
+                    skillsGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading skills. Please try again.</p>';
+                }
+            }
+        }
+
+        // Load courses
+        async function loadCourses() {
+            try {
+                const response = await fetch(`${API_BASE}/courses`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const coursesGrid = document.getElementById('coursesGrid');
+                    if (coursesGrid) {
+                        coursesGrid.innerHTML = data.data.courses.map(course => `
+                            <div class="content-card">
+                                <h3>${course.title}</h3>
+                                <p>${course.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span class="author">By: ${course.instructor_name}</span>
+                                    <span style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; color: var(--text-light);">
+                                        ${course.difficulty_level}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary" onclick="viewCourse(${course.id})" style="flex: 1;">
+                                        View Course
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadCourse(${course.id})">
+                                        📥
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center">No courses found. Upload the first course!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading courses:', error);
+                const coursesGrid = document.getElementById('coursesGrid');
+                if (coursesGrid) {
+                    coursesGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading courses. Please try again.</p>';
+                }
+            }
+        }
+
+        // Load notes
+        async function loadNotes() {
+            try {
+                const response = await fetch(`${API_BASE}/notes`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const notesGrid = document.getElementById('notesGrid');
+                    if (notesGrid) {
+                        notesGrid.innerHTML = data.data.notes.map(note => `
+                            <div class="content-card">
+                                <h3>${note.title}</h3>
+                                <p>${note.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span class="author">By: ${note.author_name}</span>
+                                    <span style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; color: var(--text-light);">
+                                        ${note.file_type?.toUpperCase() || 'FILE'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary" onclick="viewNote(${note.id})" style="flex: 1;">
+                                        View Note
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadNote(${note.id})">
+                                        📥
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center">No notes found. Upload the first note!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading notes:', error);
+                const notesGrid = document.getElementById('notesGrid');
+                if (notesGrid) {
+                    notesGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading notes. Please try again.</p>';
+                }
+            }
+        }
+
+        // Load projects
+        async function loadProjects() {
+            try {
+                const response = await fetch(`${API_BASE}/projects`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const projectsGrid = document.getElementById('projectsGrid');
+                    if (projectsGrid) {
+                        projectsGrid.innerHTML = data.data.projects.map(project => `
+                            <div class="content-card">
+                                <h3>${project.title}</h3>
+                                <p>${project.description || 'No description provided'}</p>
+                                <div style="margin: 1rem 0;">
+                                    <span class="author">By: ${project.author_name}</span>
+                                    ${project.technologies ? `
+                                        <div style="margin-top: 0.5rem;">
+                                            <small style="color: var(--text-light);">Tech: ${JSON.parse(project.technologies).join(', ')}</small>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary" onclick="viewProject(${project.id})" style="flex: 1;">
+                                        View Project
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadProject(${project.id})">
+                                        📥
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center">No projects found. Upload the first project!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                const projectsGrid = document.getElementById('projectsGrid');
+                if (projectsGrid) {
+                    projectsGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading projects. Please try again.</p>';
+                }
+            }
+        }
+
+        // Load colleges
+        async function loadColleges() {
+            try {
+                const response = await fetch(`${API_BASE}/colleges`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const collegesGrid = document.getElementById('collegesGrid');
+                    if (collegesGrid) {
+                        collegesGrid.innerHTML = data.data.colleges.map(college => `
+                            <div class="content-card" onclick="viewCollege('${college.name}')">
+                                <h3>${college.name}</h3>
+                                <p>${college.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span style="color: var(--text-light);">${college.location || 'Location not specified'}</span>
+                                    <span style="background: var(--primary-color); color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.8rem;">
+                                        ${college.student_count || 0} students
+                                    </span>
+                                </div>
+                                <button class="btn-primary" onclick="event.stopPropagation(); viewCollegeStudents('${college.name}')" style="width: 100%;">
+                                    View Students
+                                </button>
+                            </div>
+                        `).join('') || '<p class="text-center">No colleges found. Add the first college!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading colleges:', error);
+                const collegesGrid = document.getElementById('collegesGrid');
+                if (collegesGrid) {
+                    collegesGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading colleges. Please try again.</p>';
+                }
+            }
+        }
+
+        // Load datasets
+        async function loadDatasets() {
+            try {
+                const response = await fetch(`${API_BASE}/datasets`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const datasetsGrid = document.getElementById('datasetsGrid');
+                    if (datasetsGrid) {
+                        datasetsGrid.innerHTML = data.data.datasets.map(dataset => `
+                            <div class="content-card">
+                                <h3>${dataset.title}</h3>
+                                <p>${dataset.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span class="author">By: ${dataset.author_name}</span>
+                                    <span style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; color: var(--text-light);">
+                                        ${dataset.file_format?.toUpperCase() || 'FILE'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary" onclick="viewDataset(${dataset.id})" style="flex: 1;">
+                                        View Dataset
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadDataset(${dataset.id})">
+                                        📥
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center">No datasets found. Upload the first dataset!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading datasets:', error);
+                const datasetsGrid = document.getElementById('datasetsGrid');
+                if (datasetsGrid) {
+                    datasetsGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading datasets. Please try again.</p>';
+                }
+            }
+        }
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Search functionality for skills
+            const skillSearch = document.getElementById('skillSearch');
+            if (skillSearch) {
+                skillSearch.addEventListener('input', debounce(async (e) => {
+                    const query = e.target.value;
+                    if (query.length > 2) {
+                        await searchSkills(query);
+                    } else if (query.length === 0) {
+                        await loadSkills();
+                    }
+                }, 300));
+            }
+
+            // Modal close functionality
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                const closeBtn = modal.querySelector('.close');
+                closeBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+
+                window.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Debounce function for search
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Search skills
+        async function searchSkills(query) {
+            try {
+                const response = await fetch(`${API_BASE}/skills/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const skillsGrid = document.getElementById('usersGrid');
+                    if (skillsGrid) {
+                        skillsGrid.innerHTML = data.data.skills.map(skill => `
+                            <div class="user-card" onclick="viewUserProfile(${skill.user_id})">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    ${skill.avatar_url ? 
+                                        `<img src="${skill.avatar_url}" alt="${skill.user_name}" style="width: 50px; height: 50px; border-radius: 50%;">` :
+                                        `<div style="width: 50px; height: 50px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">${skill.user_name.charAt(0)}</div>`
+                                    }
+                                    <div>
+                                        <h3>${skill.user_name}</h3>
+                                        <p class="college">${skill.college || 'No college specified'}</p>
+                                    </div>
+                                </div>
+                                <div class="skill-item">
+                                    <strong>${skill.name}</strong>
+                                    <p>${skill.description || 'No description provided'}</p>
+                                    <small style="color: var(--primary-color);">Level: ${skill.proficiency_level}</small>
+                                </div>
+                                <button class="btn-primary" onclick="event.stopPropagation(); requestVideoCall(${skill.id})" style="width: 100%; margin-top: 1rem;">
+                                    Request Video Call
+                                </button>
+                            </div>
+                        `).join('') || '<p class="text-center">No skills found matching your search.</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error searching skills:', error);
+                showNotification('Error searching skills', 'error');
+            }
+        }
+
+        // Make functions available globally
+        window.openUploadModal = openUploadModal;
+        window.viewUserProfile = (userId) => {
+            showNotification('User profile feature coming soon!', 'info');
+        };
+
+        window.requestVideoCall = (skillId) => {
+            showNotification('Video call request sent! The user will be notified.', 'success');
+        };
+
+        window.viewCourse = (courseId) => {
+            showNotification('Course viewer coming soon!', 'info');
+        };
+
+        window.downloadCourse = (courseId) => {
+            showNotification('Course download started!', 'success');
+        };
+
+        window.viewNote = (noteId) => {
+            showNotification('Note viewer coming soon!', 'info');
+        };
+
+        window.downloadNote = async (noteId) => {
+            try {
+                const response = await fetch(`${API_BASE}/notes/${noteId}/download`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showNotification('Note download recorded!', 'success');
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error recording note download:', error);
+                showNotification('Error downloading note', 'error');
+            }
+        };
+
+        window.viewProject = (projectId) => {
+            showNotification('Project viewer coming soon!', 'info');
+        };
+
+        window.downloadProject = (projectId) => {
+            showNotification('Project download started!', 'success');
+        };
+
+        window.viewCollege = (collegeName) => {
+            showNotification('College details coming soon!', 'info');
+        };
+
+        window.viewCollegeStudents = (collegeName) => {
+            showNotification('Loading students list...', 'info');
+        };
+
+        window.viewDataset = (datasetId) => {
+            showNotification('Dataset viewer coming soon!', 'info');
+        };
+
+        window.downloadDataset = async (datasetId) => {
+            try {
+                const response = await fetch(`${API_BASE}/datasets/${datasetId}/download`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showNotification('Dataset download recorded!', 'success');
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error recording dataset download:', error);
+                showNotification('Error downloading dataset', 'error');
+            }
+        };
+    </script>
+</body>
+</html>  -->
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+first person send request to video call and second person get msg (notify) "someone<user_name> is  requesting for video call " and then  second person see those msg may accept  or reject and if he/she  accept then he/she will send back msg at timing  10:00am(scheculed time for exchange knowlege)  now how will you  implements video call at that time for both the users

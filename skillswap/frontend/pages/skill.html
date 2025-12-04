@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Skills</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>SkillSwap</h2>
+        </div>
+        <div class="nav-links">
+            <button class="nav-link active" data-page="skills">Skills/Video Call</button>
+            <button class="nav-link" data-page="courses">Courses</button>
+            <button class="nav-link" data-page="notes">Notes</button>
+            <button class="nav-link" data-page="projects">Projects</button>
+            <button class="nav-link" data-page="colleges">Colleges</button>
+            <button class="nav-link" data-page="datasets">Datasets</button>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-icon" id="notificationBtn">🔔</button>
+            <button class="btn-icon" id="profileBtn">👤</button>
+            <button class="btn-logout" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div id="skills-page" class="page active">
+            <div class="page-header">
+                <h2>Skills & Video Calls</h2>
+                <div class="search-container">
+                    <input type="text" id="skillSearch" placeholder="search example skills: code or name: bob">
+                    <button class="btn-search">🔍</button>
+                </div>
+            </div>
+            <div class="users-grid" id="usersGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+        <!-- Add video elements (initially hidden) -->
+<div id="videoCallContainer" style="display: none;">
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+    <button onclick="webRTCManager.endCall()">End Call</button>
+</div>
+
+<!-- In the skill card, add a button to request video call -->
+
+    </main>
+
+    <script type="module">
+        import { logout, getAuthHeaders, checkAuth, getCurrentUser, showNotification } from '../js/auth.js';
+
+        const API_BASE = 'http://localhost:5000/api';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!checkAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            await initializeSkillsPage();
+        });
+
+        async function initializeSkillsPage() {
+            await loadSkills();
+            initializeEventListeners();
+        }
+
+        async function loadSkills() {
+            try {
+                const response = await fetch(`${API_BASE}/skills`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const skillsGrid = document.getElementById('usersGrid');
+                    if (skillsGrid) {
+                        skillsGrid.innerHTML = data.data.skills.map(skill => `
+                            <div class="user-card" onclick="viewUserProfile(${skill.user_id})">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    ${skill.avatar_url ? 
+                                        `<img src="${skill.avatar_url}" alt="${skill.user_name}" style="width: 50px; height: 50px; border-radius: 50%;">` :
+                                        `<div style="width: 50px; height: 50px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">${skill.user_name.charAt(0)}</div>`
+                                    }
+                                    <div>
+                                        <h3>${skill.user_name}</h3>
+                                        <p class="college">${skill.college || 'No college specified'}</p>
+                                    </div>
+                                </div>
+                                <div class="skill-item">
+                                    <strong>${skill.name}</strong>
+                                    <p>${skill.description || 'No description provided'}</p>
+                                    <small style="color: var(--primary-color);">Level: ${skill.proficiency_level}</small>
+                                </div>
+                                <button class="btn-primary" onclick="event.stopPropagation(); requestVideoCall(${skill.id})" style="width: 100%; margin-top: 1rem;">
+                                    Request Video Call
+                                </button>
+                            </div>
+                        `).join('') || '<p class="text-center">No skills found. Be the first to share a skill!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading skills:', error);
+                const skillsGrid = document.getElementById('usersGrid');
+                if (skillsGrid) {
+                    skillsGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading skills. Please try again.</p>';
+                }
+            }
+        }
+
+        function initializeEventListeners() {
+            // Search functionality
+            const skillSearch = document.getElementById('skillSearch');
+            if (skillSearch) {
+                skillSearch.addEventListener('input', debounce(async (e) => {
+                    const query = e.target.value;
+                    if (query.length > 2) {
+                        await searchSkills(query);
+                    } else if (query.length === 0) {
+                        await loadSkills();
+                    }
+                }, 300));
+            }
+
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const targetPage = e.target.getAttribute('data-page');
+                    if (targetPage !== 'skills') {
+                        window.location.href = `${targetPage}.html`;
+                    }
+                });
+            });
+
+            // Profile button
+            document.getElementById('profileBtn').addEventListener('click', () => {
+                window.location.href = 'profile.html';
+            });
+
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function searchSkills(query) {
+            try {
+                const response = await fetch(`${API_BASE}/skills/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const skillsGrid = document.getElementById('usersGrid');
+                    if (skillsGrid) {
+                        skillsGrid.innerHTML = data.data.skills.map(skill => `
+                            <div class="user-card" onclick="viewUserProfile(${skill.user_id})">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    ${skill.avatar_url ? 
+                                        `<img src="${skill.avatar_url}" alt="${skill.user_name}" style="width: 50px; height: 50px; border-radius: 50%;">` :
+                                        `<div style="width: 50px; height: 50px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">${skill.user_name.charAt(0)}</div>`
+                                    }
+                                    <div>
+                                        <h3>${skill.user_name}</h3>
+                                        <p class="college">${skill.college || 'No college specified'}</p>
+                                    </div>
+                                </div>
+                                <div class="skill-item">
+                                    <strong>${skill.name}</strong>
+                                    <p>${skill.description || 'No description provided'}</p>
+                                    <small style="color: var(--primary-color);">Level: ${skill.proficiency_level}</small>
+                                </div>
+                                <button class="btn-primary" onclick="event.stopPropagation(); requestVideoCall(${skill.id})" style="width: 100%; margin-top: 1rem;">
+                                    Request Video Call
+                                </button>
+                            </div>
+                        `).join('') || '<p class="text-center">No skills found matching your search.</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error searching skills:', error);
+                showNotification('Error searching skills', 'error');
+            }
+        }
+
+        window.viewUserProfile = (userId) => {
+            showNotification('User profile feature coming soon!', 'info');
+        };
+
+        window.requestVideoCall = (skillId) => {
+            showNotification('Video call request sent! The user will be notified.', 'success');
+        };
+    <button class="btn-primary" onclick="requestVideoCall(${skill.user_id}, ${skill.id})">
+    Request Video Call
+</button>
+
+// <script>
+//     // Initialize WebSocket when the page loads (if user is logged in)
+//     document.addEventListener('DOMContentLoaded', () => {
+//         const token = localStorage.getItem('token');
+//         if (token) {
+//             webRTCManager.initWebSocket(token);
+//         }
+//     });
+
+//     // Function to request a video call
+//     function requestVideoCall(receiverId, skillId) {
+//         // First, create a video call request via API
+//         fetch('/api/video-requests', {
+//             method: 'POST',
+//             headers: getAuthHeaders(),
+//             body: JSON.stringify({
+//                 receiver_id: receiverId,
+//                 skill_id: skillId
+//             })
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.success) {
+//                 // Also send a real-time notification via WebSocket
+//                 webRTCManager.sendVideoCallRequest(receiverId, skillId);
+//                 alert('Video call request sent!');
+//             } else {
+//                 alert('Failed to send video call request: ' + data.message);
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Error sending video call request:', error);
+//         });
+//     }
+// </script>
+</script>
+</body>
+</html>

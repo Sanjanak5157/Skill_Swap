@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Welcome</title>
+    <link rel="stylesheet" href="../css/welcome.css">
+</head>
+<body>
+    <div class="welcome-container">
+        <header class="welcome-header">
+            <div class="logo">
+                <h1>SkillSwap</h1>
+                <p>Exchange Knowledge, Grow Together</p>
+            </div>
+        </header>
+        
+        <main class="welcome-main">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h2>Welcome to SkillSwap</h2>
+                    <p class="hero-subtitle">Connect, Learn, and Share Skills with Students Worldwide</p>
+                    <p class="hero-description">
+                        Join a vibrant community of learners where you can exchange skills, 
+                        share knowledge, and collaborate on projects. Whether you want to 
+                        learn coding, design, languages, or any other skill, SkillSwap 
+                        connects you with the right people.
+                    </p>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="navigateTo('login.html')">
+                            <span>Login</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="navigateTo('signup.html')">
+                            <span>Sign Up Free</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="hero-image">
+                    <div class="floating-cards">
+                        <div class="card card-1">💻 Code</div>
+                        <div class="card card-2">🎨 Design</div>
+                        <div class="card card-3">📚 Study</div>
+                        <div class="card card-4">🔬 Science</div>
+                        <div class="card card-5">🌐 Languages</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <h3>Why Choose SkillSwap?</h3>
+                <div class="features-grid">
+                    <div class="feature-card" onclick="navigateToLogin()">
+                        <div class="feature-icon">🎯</div>
+                        <h4>Skill Exchange</h4>
+                        <p>Trade your skills with others via video calls and learn from peers</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateToLogin()">
+                        <div class="feature-icon">📹</div>
+                        <h4>Video Learning</h4>
+                        <p>Access courses and tutorials shared by community members</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateToLogin()">
+                        <div class="feature-icon">📝</div>
+                        <h4>Notes & Resources</h4>
+                        <p>Share and download study materials, notes, and resources</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateToLogin()">
+                        <div class="feature-icon">🚀</div>
+                        <h4>Projects</h4>
+                        <p>Collaborate on projects and showcase your work to the community</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateToLogin()">
+                        <div class="feature-icon">🏫</div>
+                        <h4>College Network</h4>
+                        <p>Connect with students from your college and other institutions</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateToLogin()">
+                        <div class="feature-icon">📊</div>
+                        <h4>Datasets</h4>
+                        <p>Share and access datasets for research and learning purposes</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <div class="stat-item">
+                    <h4>1000+</h4>
+                    <p>Active Users</p>
+                </div>
+                <div class="stat-item">
+                    <h4>500+</h4>
+                    <p>Skills Shared</p>
+                </div>
+                <div class="stat-item">
+                    <h4>200+</h4>
+                    <p>Courses Available</p>
+                </div>
+                <div class="stat-item">
+                    <h4>50+</h4>
+                    <p>Colleges</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="welcome-footer">
+            <p>&copy; 2024 SkillSwap. All rights reserved. | Building the future of peer-to-peer learning</p>
+        </footer>
+    </div>
+
+    <script>
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        function navigateToLogin() {
+            navigateTo('login.html');
+        }
+
+        // Add some animation to floating cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+        });
+    </script>
+</body>
+</html>

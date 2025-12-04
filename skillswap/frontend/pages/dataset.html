@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Datasets</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>SkillSwap</h2>
+        </div>
+        <div class="nav-links">
+            <button class="nav-link" data-page="skills">Skills/Video Call</button>
+            <button class="nav-link" data-page="courses">Courses</button>
+            <button class="nav-link" data-page="notes">Notes</button>
+            <button class="nav-link" data-page="projects">Projects</button>
+            <button class="nav-link" data-page="colleges">Colleges</button>
+            <button class="nav-link active" data-page="datasets">Datasets</button>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-icon" id="notificationBtn">🔔</button>
+            <button class="btn-icon" id="profileBtn">👤</button>
+            <button class="btn-logout" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div id="datasets-page" class="page active">
+            <div class="page-header">
+                <h2>Datasets</h2>
+                <div class="page-actions">
+                    <div class="search-container">
+                        <input type="text" id="datasetSearch" placeholder="search datasets category: animal">
+                        <button class="btn-search">🔍</button>
+                    </div>
+                    <button class="btn-upload" onclick="openUploadModal('dataset')">Upload Dataset</button>
+                </div>
+            </div>
+            <div class="content-grid" id="datasetsGrid">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="modalTitle">Upload Dataset</h3>
+            <form id="uploadForm">
+                <div id="uploadFields">
+                    <!-- Dynamic fields will be inserted here -->
+                </div>
+                <button type="submit" class="btn-primary">Upload Dataset</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { logout, getAuthHeaders, checkAuth, showNotification } from '../js/auth.js';
+        import { openUploadModal } from '../js/upload.js';
+
+        const API_BASE = 'http://localhost:5000/api';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!checkAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            await initializeDatasetsPage();
+        });
+
+        async function initializeDatasetsPage() {
+            await loadDatasets();
+            initializeEventListeners();
+        }
+
+        async function loadDatasets() {
+            try {
+                const response = await fetch(`${API_BASE}/datasets`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const datasetsGrid = document.getElementById('datasetsGrid');
+                    if (datasetsGrid) {
+                        datasetsGrid.innerHTML = data.data.datasets.map(dataset => `
+                            <div class="content-card">
+                                <h3>${dataset.title}</h3>
+                                <p>${dataset.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span class="author">By: ${dataset.author_name}</span>
+                                    <span style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; color: var(--text-light);">
+                                        ${dataset.file_format?.toUpperCase() || 'FILE'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary" onclick="viewDataset(${dataset.id})" style="flex: 1;">
+                                        View Dataset
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadDataset(${dataset.id})">
+                                        📥
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center">No datasets found. Upload the first dataset!</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading datasets:', error);
+                const datasetsGrid = document.getElementById('datasetsGrid');
+                if (datasetsGrid) {
+                    datasetsGrid.innerHTML = '<p class="text-center" style="color: var(--error-color);">Error loading datasets. Please try again.</p>';
+                }
+            }
+        }
+
+        function initializeEventListeners() {
+            // Search functionality
+            const datasetSearch = document.getElementById('datasetSearch');
+            if (datasetSearch) {
+                datasetSearch.addEventListener('input', debounce(async (e) => {
+                    const query = e.target.value;
+                    if (query.length > 2) {
+                        await searchDatasets(query);
+                    } else if (query.length === 0) {
+                        await loadDatasets();
+                    }
+                }, 300));
+            }
+
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const targetPage = e.target.getAttribute('data-page');
+                    if (targetPage !== 'datasets') {
+                        window.location.href = `${targetPage}.html`;
+                    }
+                });
+            });
+
+            // Profile button
+            document.getElementById('profileBtn').addEventListener('click', () => {
+                window.location.href = 'profile.html';
+            });
+
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // Modal close functionality
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                const closeBtn = modal.querySelector('.close');
+                closeBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+
+                window.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function searchDatasets(query) {
+            try {
+                const response = await fetch(`${API_BASE}/datasets/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const datasetsGrid = document.getElementById('datasetsGrid');
+                    if (datasetsGrid) {
+                        datasetsGrid.innerHTML = data.data.datasets.map(dataset => `
+                            <div class="content-card">
+                                <h3>${dataset.title}</h3>
+                                <p>${dataset.description || 'No description provided'}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                                    <span class="author">By: ${dataset.author_name}</span>
+                                    <span style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; color: var(--text-light);">
+                                        ${dataset.file_format?.toUpperCase() || 'FILE'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary" onclick="viewDataset(${dataset.id})" style="flex: 1;">
+                                        View Dataset
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadDataset(${dataset.id})">
+                                        📥
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center">No datasets found matching your search.</p>';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error searching datasets:', error);
+                showNotification('Error searching datasets', 'error');
+            }
+        }
+
+        window.openUploadModal = openUploadModal;
+        window.viewDataset = (datasetId) => {
+            showNotification('Dataset viewer coming soon!', 'info');
+        };
+
+        window.downloadDataset = async (datasetId) => {
+            try {
+                const response = await fetch(`${API_BASE}/datasets/${datasetId}/download`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showNotification('Dataset download recorded!', 'success');
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error recording dataset download:', error);
+                showNotification('Error downloading dataset', 'error');
+            }
+        };
+    </script>
+</body>
+</html>
